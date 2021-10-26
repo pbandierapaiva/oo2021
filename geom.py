@@ -21,7 +21,7 @@ class Ponto:
 		self.sety( args[1] )
 		
 	def __repr__(self):
-		return "Ponto (%d,%d)"%(self.__x,self.__y)
+		return "(%d,%d)"%(self.__x,self.__y)
 	def __eq__(self, ponto):
 		return self.__x == ponto.getx() and self.__y == ponto.gety()
 		
@@ -115,9 +115,36 @@ class Reta:
 		
 		return Ponto(x,y)
 
+# Poligono definido com lista de pontos protegida
+class Poligono:
+	def __init__(self, pontos=[]):
+		self.__pontos = pontos.copy()
+	def __getitem__(self, ind):
+		return self.__pontos[ind]
+	
+class Retangulo(Poligono):
+	def __init__(self, p1, l, h):
+		p2 = Ponto(p1.getx()+l, p1.gety())
+		p3 = Ponto(p2.getx(), p2.gety()-h)
+		p4 = Ponto(p3.getx()-l, p3.gety())
+		Poligono.__init__(self, [p1,p2,p3,p4] )	
+	def geth(self):
+		return self[0].distancia(self[3])
+	def getl(self):
+		return self[0].distancia(self[1])
+	def area(self):
+		return self.geth()*self.getl()
+	def __repr__(self):
+		return "Retângulo: "+str(self[0])+", "+str(self[1])+", "+str(self[2])+", "+str(self[3])
+	def __contains__(self, p):
+		return self[0].getx()<=p.getx() and self[0].gety()>=p.gety() and \
+			self[2].getx()>=p.getx()  and self[2].gety()<=p.gety()     
 
-
-
+class Quadrado(Retangulo):
+	def __init__(self, p, lado):
+		Retangulo.__init__(self, p, lado, lado)
+	def __repr__(self):
+		return "Quadrado: "+str(self[0])+", "+str(self[1])+", "+str(self[2])+", "+str(self[3])
 
 
 
