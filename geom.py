@@ -89,13 +89,14 @@ class Reta:
 		x = ponto.getx() 
 		y = ponto.gety()
 		return y == a*x+l
-	def dist(self, ponto):
+	def distancia(self, ponto):
 		# https://brasilescola.uol.com.br/matematica/distancia-entre-ponto-reta.htm
 #		return (self.getang()*ponto.getx()+self.getlin()+ponto.gety())/(self.getang()*2+1)**0.5)
 		a = self.getang()     
 		l = self.getlin()
 		x = ponto.getx() 
 		y = ponto.gety()
+		print(a,l,x,y)
 		d = ( (a * x) + y + l ) / ( (a**2 + 1)**0.5 )
 		return d  				
 	def intercepta(self, r ):
@@ -121,9 +122,13 @@ class Poligono:
 		self.__pontos = pontos.copy()
 	def __getitem__(self, ind):
 		return self.__pontos[ind]
+	def __repr__(self):
+		return "Poligono: " +  str( self.__pontos )
 	
 class Retangulo(Poligono):
 	def __init__(self, p1, l, h):
+		if type(p1) != Ponto or ( type(l) != int and type(l) != float )  or ( type(h) != int and type(h) != float ):
+			raise TypeError
 		p2 = Ponto(p1.getx()+l, p1.gety())
 		p3 = Ponto(p2.getx(), p2.gety()-h)
 		p4 = Ponto(p3.getx()-l, p3.gety())
@@ -145,6 +150,58 @@ class Quadrado(Retangulo):
 		Retangulo.__init__(self, p, lado, lado)
 	def __repr__(self):
 		return "Quadrado: "+str(self[0])+", "+str(self[1])+", "+str(self[2])+", "+str(self[3])
+
+class Triangulo(Poligono):
+	def __init__(self, p1, p2, p3):
+		Poligono.__init__(self, [p1, p2, p3])
+	def __repr__(self):
+		return "Triângulo: "+ str(self[0]) + str(self[1]) + str(self[2])
+	def area(self):
+		base = self[0].distancia(self[1])
+		retabase = Reta(self[0],self[1])
+		altura = retabase.distancia(self[2])
+		return base*altura/2
+	def tipo(self):    # Equilátero (E), Isóceles (I), Retângulo (R) e Escaleno (S)
+		l1 = self[0].distancia(self[1])
+		l2 = self[1].distancia(self[2])
+		l3 = self[0].distancia(self[2])
+		
+		if( l1==l2 and l1==l3 and l2==l3 ):
+			return "E"
+		
+		strTipo = ""
+		if( l1==l2 or l1==l3 or l2==l3 ):
+			strTipo="I"
+		
+		d0 = Reta(self[1],self[2]).distancia(self[0])   
+		d1 = Reta(self[0],self[2]).distancia(self[1])   										
+		if       d0 == self[0].distancia(self[1])  or d0 == self[0].distancia(self[2])    or \
+			 d1 == self[1].distancia(self[0])  or d1 == self[1].distancia(self[2]) :
+			strTipo += "R"
+			return strTipo
+			
+		if strTipo == "":
+			return "S"
+		return strTipo 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
