@@ -54,7 +54,15 @@ class Ponto:
 		return ( (ponto.getx()-self.__x)**2 + (ponto.gety()-self.__y)**2 )**0.5
 		
 class Reta:
-	"""A classe Reta define uma reta através dos coeficientes da equação y = ax +b.
+	"""
+	Equação geral da reta:
+	
+	ax + by + c 
+
+	
+	A descrição original era:
+		A classe Reta define uma reta através dos coeficientes da equação y = ax +b.
+	
 	Construtor sobrecarregado que crie uma instância de reta a partir de dois pontos, a partir dos coeficientes (angular e linear);
 	Métodos de acesso para o coeficiente angular e para o coeficiente linear da reta;
 	Um método que gere e retorne a representação String da reta;
@@ -66,59 +74,75 @@ class Reta:
 		if len(args)!=2:
 			raise TypeError
 		if type(args[0])==Ponto and type(args[1])==Ponto:
-			# criar reta a partir de 2 pontos
-			self.__angular = (args[0].gety()-args[1].gety())/(args[0].getx()-args[1].getx())
-			self.__linear  =    args[0].gety() - (args[0].getx()*self.__angular)
+			p1 = args[0]
+			p2 = args[1]
+			
+			if p1.getx() == p2.getx():
+				self.__a = None       # reta vertical
+				self.__c = p2.getx()
+			else:
+				self.__a  = (p1.gety()-p2.gety())/(p1.getx()-p2.getx())
+				self.__c  = p1.gety() - (p1.getx()*self.__a)
 		else:
-			self.__angular = args[0]
-			self.__linear  = args[1]
+			self.__a = args[0]
+			self.__c  = args[1]
 	def __repr__(self):
-		return "Reta: f(x) = %d x + %d"%(self.__angular,self.__linear)
-	def setang(self, coef):
-		self.__angular = coef
-	def setlin(self, coef):
-		self.__linear = coef
-	def getang(self):
-		return self.__angular
-	def getlin(self):
-		return self.__linear
+		if self.__a==None:
+			return "Reta: x = %d"%(self.__c) 
+		return "Reta: f(x) = %d x + y + %d"%(self.__a,self.__c)
+	def seta(self, coef):
+		self.__a = coef
+	def setc(self, coef):
+		self.__c = coef
+	def geta(self):
+		return self.__a
+	def getc(self):
+		return self.__c
 	def __contains__(self, ponto):
-#		return ponto.gety() == self.getang() *  ponto.getx() + self.getlin()
-		a = self.getang()     
-		l = self.getlin()
-		x = ponto.getx() 
-		y = ponto.gety()
-		return y == a*x+l
+		if self.__a == None:
+			if( ponto.getx() == self.__c ):
+				return True
+			else:
+				return False
+				
+		return ponto.gety()  ==  ( self.__a * ponto.getx() ) + self.__c
+		
 	def distancia(self, ponto):
-		# https://brasilescola.uol.com.br/matematica/distancia-entre-ponto-reta.htm
-#		return (self.getang()*ponto.getx()+self.getlin()+ponto.gety())/(self.getang()*2+1)**0.5)
-		a = self.getang()     
-		l = self.getlin()
-		x = ponto.getx() 
-		y = ponto.gety()
-		print(a,l,x,y)
-		d = ( (a * x) + y + l ) / ( (a**2 + 1)**0.5 )
-		return d  				
+		# https://brasilescola.uol.com.br/matematica/distancia-entre-ponto-reta.htm		
+		if self.__a == None:
+			return self.__c - ponto.getx()
+		# distancia = ( (a * x) + y + l ) / ( (a**2 + 1)**0.5 )			
+		return (self.__a*ponto.getx()+self.__c+ponto.gety())/((self.__a*2+1)**0.5)
+
 	def intercepta(self, r ):
 		# x , y ?
 		#             y = ( a2*l1 - a1*l2 ) / (a2-a1)
-		a1 = self.getang() 	
-		a2 = r.getang()
-		l1 = self.getlin()
-		l2 = r.getlin()
+		a1 = self.__a 	
+		a2 = r.geta()
+		c1 = self.__c
+		c2 = r.getc()
 		
 		if a2==a1:  # paralelas
 			return None
-		y = ( a2*l1 - a1*l2 ) / (a2-a1)		
-		x = (y-l1) / a1
-		x2 = (y-l2) / a2
-		print(x ,  x2)
+			
+		if a1 ==None or a2==None:
+			if a1==None:
+				return Ponto( c1, c1 * a2 + c2 ) 
+			if a2==None:
+				return Ponto( c2, c2 * a1 + c1 )
+		
+			
+		y = ( a2*c1 - a1*c2 ) / (a2-a1)		
+		x = (y-c1) / a1
 		
 		return Ponto(x,y)
 
 # Poligono definido com lista de pontos protegida
 class Poligono:
 	def __init__(self, pontos=[]):
+		for p in pontos:
+			if type(p)!=Ponto:
+				raise TypeError
 		self.__pontos = pontos.copy()
 	def __getitem__(self, ind):
 		return self.__pontos[ind]
@@ -152,8 +176,13 @@ class Quadrado(Retangulo):
 		return "Quadrado: "+str(self[0])+", "+str(self[1])+", "+str(self[2])+", "+str(self[3])
 
 class Triangulo(Poligono):
-	def __init__(self, p1, p2, p3):
-		Poligono.__init__(self, [p1, p2, p3])
+	def __init__(self, *args):
+		if len(args)==3:
+			Poligono.__init__(self, [args[0], args[1], args[2]])
+		elif len(args)==1 and type(args[0])==Triangulo:
+			Poligono.__init__(self, [args[0][0], args[0][1], args[0][2]])
+		else:
+			raise TypeError
 	def __repr__(self):
 		return "Triângulo: "+ str(self[0]) + str(self[1]) + str(self[2])
 	def area(self):
