@@ -10,6 +10,7 @@ class Ente:
 		return 
 
 class Ponto:
+
 	def __init__( self, *args):
 		if len(args)==1:
 			if type(args[0])!=Ponto:
@@ -60,7 +61,59 @@ class Ponto:
 		if type(ponto) != Ponto:
 			raise TypeError
 		return ( (ponto.getx()-self.__x)**2 + (ponto.gety()-self.__y)**2 )**0.5
+class RetaGA:
+	"""Reta definida por 1 ponto e 1 angulo [0 : 180["""
+	def __init__(self, *args):
+		if len(args)!=2:
+			raise TypeError
+		if type(args[0])==Ponto and type(args[1])==Ponto:
+			p1 = args[0]
+			p2 = args[1]
+			self.ponto = p1
+			
+			# cálculo do ângulo
+			adjacente = p1.getx()-p2.getx()    # cateto adjacente=>  x0 - x1
+			oposto = p1.gety()-p2.gety()
+			
+			if adjacente==0:
+				self.angulo = 90  # PI/2 radianos = 90 graus
+			else:
+				self.angulo = degrees(  atan(  oposto/adjacente ) )    # arco-tangente retorna ângulo em radianos
+		elif  type(args[0])==Ponto and isnumeric(args[1]):  # ponto e ângulo
+			self.ponto = args[0]
+			self.angulo = args[1]
+		else:
+			raise TypeError
+	def __repr__(self):
+		return "Reta passanado por "+str(self.ponto)+" ângulo: "+str(self.angulo) 
+
+	def __contains__(self, p):
+		x0 = self.ponto.getx()
+		x1 = p.getx()
+		y0 = self.ponto.gety()
+		y1 = p.gety()
 		
+		if sin(radians(self.angulo)) == fabs( (y1-y0)/y1.distancia(y0) ) \
+		   and  cos(radians(self.angulo)) == fabs( (x1-x0)/x1.distancia(x0) ):
+			return True
+		return False
+	def __equal__(self,r):
+		return  r.contains(self.ponto) and r.angulo==self.angulo
+	def intercepto(self):  # ponto que cruza com eixo y
+		
+		x0 = self.ponto.getx()
+		y0 = self.ponto.gety()		
+		
+		if self.angulo==90:
+			return None
+		y = y0 + x0* tan( radians(90-self.angulo)  )	
+		return Ponto(0,y)
+	
+	def distancia(self, ponto):
+	
+		RetaGA(ponto, self.angulo+90)
+				
+		pass					
 class Reta:
 	"""
 	Equação geral da reta:
@@ -120,6 +173,9 @@ class Reta:
 		if self.__a == None:
 			return self.__c - ponto.getx()
 		# distancia = ( (a * x) + y + l ) / ( (a**2 + 1)**0.5 )			
+		
+		#  
+		
 		return (self.__a*ponto.getx()+self.__c+ponto.gety())/((self.__a*2+1)**0.5)
 
 	def intercepta(self, r ):
@@ -250,8 +306,8 @@ class Mirante(Ente):
 	def objetosMirados(self):	
 		resultado = []
 	
-		x = self.local.getx() + cos(self.mira) 
-		y = self.local.gety() + sin(self.mira)
+		x = self.local.getx() + cos(radians(self.mira)) 
+		y = self.local.gety() + sin(radians(self.mira))
 		
 		retademira = Reta( self.local, Ponto(x,y) ) 
 
