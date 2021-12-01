@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.cortininha {
+  position: relative;
+  display: inline-block;
+}
+
+.cortininha-content {
+  display: none;
+  position: absolute;
+  background-color: #aaaaaa;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.cortininha:hover .cortininha-content {
+  display: block;
+}
+.cortininha-item {
+	  padding: 10px;
+      border-radius: 10px;
+      width: 100%;
+}
+
+
+.cortininha-item:hover {
+	  background-color: #eeeeee;
+}
+
+</style>
+</head>
+<body>
+
+<h2>Hoverable Dropdown</h2>
+<p>Move the mouse over the text below to open the dropdown content.</p>
+
+<div class="cortininha">
+  <span>Meu menu</span>
+  <div class="cortininha-content">
+  <p><a class="cortininha-item" href="http://www.epm.br">EPM</a></p>
+  <p><a class="cortininha-item">Item 2</a></p>
+  <p><a class="cortininha-item">Item 3</a></p>
+  <p><a class="cortininha-item">Item 4</a></p>
+  
+  </div>
+</div>
+
+</body>
+</html>
+
+
+
