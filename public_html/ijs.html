@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Título da página</title>
+<meta charset="UTF-8">
+<meta author="Paulo Bandiera-Paiva">
+
+
+<script src='aula1js.js'></script>
+
+</head>
+
+<body>
+
+
+<p id=textop onmouseover="this.style='color:red'" onmouseout="this.style='color:blue'">
+Alo mundo! Aponte aqui.
+</p>
+
+<p onclick="pinta(this)">
+Clique aqui
+</p>
+
+<input id="entra" name="val">
+
+
+
+<script>
+nome = prompt("Entre com seu nome: ")
+elementoP = document.getElementById("textop")
+elementoP.innerHTML = "Oi "+nome+", aponte aqui"
+elementoP.style = "color:blue"
+</script>
+
+
+</body>
+</html>
