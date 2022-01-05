@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cadastro</title>
+<meta charset="UTF-8">
+<meta author="Paulo Bandiera-Paiva">
+
+<!-- W3css -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<script src='ficha.js'></script>
+
+</head>
+
+<body>
+
+<div class="w3-container">
+  <div class="w3-card-4">
+    <div class="w3-container w3-green">
+      <h2>Cadastro</h2>
+    </div>
+
+<form action="" method="post" class="w3-container">
+
+  <p>
+    <label>Nome</label>
+    <input type="text" id="inome" name="nome" class="w3-input " ></input>
+  </p>
+  <p>
+    <label>e-mail</label>
+    <input type="text" id="imail" name="mail" class="w3-input" ></input>
+  </p>
+  <p>
+    <label>CPF</label>
+    <input type="text" id="icpf" name="cpf" class="w3-input" ></input>
+  </p>
+  <p>
+    <label id="lsenha">Senha</label>
+    <input type="password" id="isenha" name="senha" class="w3-input" ></input>
+  </p>
+  <p>
+    <label id='lconfirma'>Confirma senha</label>
+    <input type="password" id="iconfirma" name="senha" class="w3-input" onblur="checasenha(event)"></input>
+  </p>
+
+  <p>
+    <label>Cidade</label>
+    <input type="text" id="icpf" name="cpf" class="w3-input" ></input>
+  </p>
+
+  <p>
+    <button type="submit" class="w3-btn w3-green w3-round-large"	 >OK</button>
+  </p>
+
+  <!-- CAIXA DE DIALOGO MODAL -->
+    <div id="errosenha" class="w3-modal">
+      <div class="w3-modal-content w3-card-4">
+        <header class="w3-container w3-green">
+          <span onclick="document.getElementById('errosenha').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          <h2>Atenção</h2>
+        </header>
+        <div class="w3-container">
+          <p>As senhas não batem</p>
+        </div>
+        <button class="w3-btn w3-block w3-green"  onclick="document.getElementById('errosenha').style.display='none'">OK</button>
+
+      </div>
+    </div>
+
+
+
+
+
+
+
+</form>
+
+</div>
+</div>
+
+</body>
+</html>

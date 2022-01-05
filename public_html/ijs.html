@@ -5,6 +5,9 @@
 <meta charset="UTF-8">
 <meta author="Paulo Bandiera-Paiva">
 
+<!-- W3css -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 <script src='aula1js.js'></script>
 
@@ -13,24 +16,19 @@
 <body>
 
 
-<p id=textop onmouseover="this.style='color:red'" onmouseout="this.style='color:blue'">
-Alo mundo! Aponte aqui.
+<p id=textop class="w3-container w3-blue w3-padding-large" onmouseover="this.style='color:red'" onmouseout="this.style='color:blue'">
+Elemento (textop): Alo mundo! Aponte aqui.
 </p>
 
-<p onclick="pinta(this)">
-Clique aqui
+<p id="mostraNome" class="w3-container w3-button w3-blue w3-border  w3-hide" onclick="mostraInputNome(this)">
+Mudar o nome
 </p>
 
-<input id="entra" name="val">
+<span id="entradaNome" class="w3-container" > Entre com seu nome:
+  <input id="entra" name="val" onblur="alteraCumprimento(this)">
+</span>
 
 
-
-<script>
-nome = prompt("Entre com seu nome: ")
-elementoP = document.getElementById("textop")
-elementoP.innerHTML = "Oi "+nome+", aponte aqui"
-elementoP.style = "color:blue"
-</script>
 
 
 </body>
