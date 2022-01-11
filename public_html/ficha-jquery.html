@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cadastro</title>
+<meta charset="UTF-8">
+<meta author="Paulo Bandiera-Paiva">
+
+<!-- W3css -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src='ficha-jquery.js'></script>
+
+</head>
+
+<body>
+
+<div class="w3-container">
+  <div class="w3-card-4">
+    <div class="w3-container w3-green">
+      <h2>Cadastro</h2>
+    </div>
+
+<form action="" method="post" class="w3-container">
+
+  <p>
+    <label>Nome</label>
+    <input type="text" id="inome" name="nome" class="w3-input " ></input>
+  </p>
+  <p>
+    <label>e-mail</label>
+    <input type="text" id="imail" name="mail" class="w3-input" ></input>
+  </p>
+  <p>
+    <label>CPF</label>
+    <input type="text" id="icpf" name="cpf" class="w3-input"></input>
+  </p>
+  <p>
+    <label id="lsenha">Senha</label>
+    <input type="password" id="isenha" name="senha" class="w3-input" ></input>
+  </p>
+  <p>
+    <label id='lconfirma'>Confirma senha</label>
+    <input type="password" id="iconfirma" name="senha" class="w3-input"></input>
+  </p>
+  <p>
+    <label>CEP</label>
+    <input type="text" id="icep" name="cep" class="w3-input"></input>
+  </p>
+  <p>
+  	<div class="w3-twothird">
+    <label>Logradouro</label>
+    <input type="text" id="ilogradouro" name="logradouro" class="w3-input" ></input>
+    </div>
+  	<div class="w3-third">
+	  <label>Número</label>
+	  <input type="text" id="inum" name="numero" class="w3-input" size="6" ></input>
+	</div>
+  </p>
+
+
+  <p class="w3-container w3-margin">
+    <button type="submit" class="w3-btn w3-green w3-round-large"	 >OK</button>
+  </p>
+
+  <!-- CAIXA DE DIALOGO MODAL -->
+    <div id="caixaerro" class="w3-modal">
+      <div class="w3-modal-content w3-card-4">
+        <header class="w3-container w3-green">
+          <span onclick="document.getElementById('errosenha').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          <h2>Atenção</h2>
+        </header>
+        <div class="w3-container">
+          <p id='mensagemerro'>XXXXXX</p>
+        </div>
+        <button class="w3-btn w3-block w3-green"  onclick="document.getElementById('errosenha').style.display='none'">OK</button>
+
+      </div>
+    </div>
+
+
+
+
+
+
+
+</form>
+
+</div>
+</div>
+
+</body>
+</html>
