@@ -33,7 +33,7 @@
   </p>
   <p>
     <label>CPF</label>
-    <input type="text" id="icpf" name="cpf" class="w3-input" ></input>
+    <input type="text" id="icpf" name="cpf" class="w3-input" onblur="testaCPF(event)"></input>
   </p>
   <p>
     <label id="lsenha">Senha</label>
@@ -43,18 +43,28 @@
     <label id='lconfirma'>Confirma senha</label>
     <input type="password" id="iconfirma" name="senha" class="w3-input" onblur="checasenha(event)"></input>
   </p>
-
   <p>
-    <label>Cidade</label>
-    <input type="text" id="icpf" name="cpf" class="w3-input" ></input>
+    <label>CEP</label>
+    <input type="text" id="icep" name="cep" class="w3-input" onblur="pegaDadosCep(event)"></input>
+  </p>
+  <p>
+  	<div class="w3-twothird">
+    <label>Logradouro</label>
+    <input type="text" id="ilogradouro" name="logradouro" class="w3-input" ></input>
+    </div>
+  	<div class="w3-third">
+	  <label>Número</label>
+	  <input type="text" id="inum" name="numero" class="w3-input" size="6" ></input>
+	</div>
   </p>
 
-  <p>
+
+  <p class="w3-container w3-margin">
     <button type="submit" class="w3-btn w3-green w3-round-large"	 >OK</button>
   </p>
 
   <!-- CAIXA DE DIALOGO MODAL -->
-    <div id="errosenha" class="w3-modal">
+    <div id="caixaerro" class="w3-modal">
       <div class="w3-modal-content w3-card-4">
         <header class="w3-container w3-green">
           <span onclick="document.getElementById('errosenha').style.display='none'"
@@ -62,7 +72,7 @@
           <h2>Atenção</h2>
         </header>
         <div class="w3-container">
-          <p>As senhas não batem</p>
+          <p id='mensagemerro'>XXXXXX</p>
         </div>
         <button class="w3-btn w3-block w3-green"  onclick="document.getElementById('errosenha').style.display='none'">OK</button>
 
