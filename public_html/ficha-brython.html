@@ -9,21 +9,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
-<!-- Brython
+<!-- Brython -->
 <script src="https://cdn.jsdelivr.net/npm/brython@3/brython.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/brython@3/brython_stdlib.js"></script>
--->
-<script src="brython/www/src/brython.min.js"></script>
-<script src="brython/www/src/brython_stdlib.js"></script>
-
 
 </head>
 
 <body  onload="brython()">
 
 <script type="text/python">
-
-
 
 from browser import document
 from browser import alert, ajax,  html
@@ -165,27 +159,21 @@ document["formficha"] <= EntraTexto("Demonstração de classe para entrada de te
     <button type="submit" class="w3-btn w3-green w3-round-large"	 >OK</button>
   </p>
 
-  <!-- CAIXA DE DIALOGO MODAL -->
+	<!-- CAIXA DE DIALOGO MODAL -->
     <div id="caixaerro" class="w3-modal">
       <div class="w3-modal-content w3-card-4">
         <header class="w3-container w3-green">
-          <span onclick="document.getElementById('errosenha').style.display='none'"
+          <span onclick="document.getElementById('caixaerro').style.display='none'"
           class="w3-button w3-display-topright">&times;</span>
           <h2>Atenção</h2>
         </header>
         <div class="w3-container">
           <p id='mensagemerro'>XXXXXX</p>
         </div>
-        <button class="w3-btn w3-block w3-green"  onclick="document.getElementById('errosenha').style.display='none'">OK</button>
+        <button class="w3-btn w3-block w3-green"  onclick="document.getElementById('caixaerro').style.display='none'">OK</button>
 
       </div>
     </div>
-
-
-
-
-
-
 
 </form>
 
