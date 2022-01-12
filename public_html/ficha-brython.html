@@ -21,7 +21,100 @@
 
 <body  onload="brython()">
 
-<script type="text/python" src="ficha-brython.py"></script>
+<script type="text/python">
+
+
+
+from browser import document
+from browser import alert, ajax,  html
+
+class EntraTexto(html.DIV):
+	def __init__(self, labelStr, valor="", width=""):
+		html.DIV.__init__(self)
+		if width !="":
+			self.style = {"width":width}
+		self.inputLbl = html.LABEL(labelStr)
+		self.inputCpo = html.INPUT()
+		self.inputCpo.value = valor
+		self.inputCpo.className = "w3-input w3-border"
+		self.inputCpo.disabled = True
+		self.alterado = False
+		self.inputCpo.bind("change", self.onChange)
+		self <= self.inputLbl
+		self <= self.inputCpo
+	def enable(self):
+		self.inputCpo.disabled = False
+	def onChange(self,ev):
+		self.alterado = True
+	def valor(self):
+		return self.inputCpo.value
+	def setavalor(self, val):
+		self.inputCpo.value= val
+		self.alterado = True
+
+
+def checasenha( ev ):
+  conf = document["iconfirma"]
+  senha = document["isenha"]
+  if conf.value != senha.value:
+      senha.value = ""
+      conf.value = ""
+
+      document["caixaerro"].style.display = "block"
+      document["mensagemerro"].innerHTML = "Senhas não batem"
+      senha.classList.add("w3-border-red")
+      conf.classList.add("w3-border-red")
+
+def checacpf( ev ):
+  inputcpf = document["icpf"]
+
+  Soma = 0;
+
+  strCPF = inputcpf.value
+  strCPF = strCPF.replace('.','')
+  strCPF = strCPF.replace('-','')
+
+  if (strCPF == "00000000000"): corrigeCPF(strCPF)
+  if len(strCPF)!=11:  corrigeCPF(strCPF)
+
+  for i in range(0,9):  Soma = Soma + int(strCPF[i]) * (11 - (i+1) )
+  Resto = (Soma * 10) % 11;
+
+  if ((Resto == 10) or (Resto == 11)):  Resto = 0
+  if (Resto != int(strCPF[9]) ): corrigeCPF(strCPF)
+
+  Soma = 0;
+  for i in range(0,10):
+    Soma = Soma + int(strCPF[i]) * (12 - (i+1))
+  Resto = (Soma * 10) % 11
+
+  if ((Resto == 10) or (Resto == 11)):
+    Resto = 0
+  if Resto != int(strCPF[10] ):
+    corrigeCPF(strCPF)
+  return True
+
+def corrigeCPF(scpf):
+  document["caixaerro"].style.display="block"
+  document["mensagemerro"].innerHTML = "CPF inválido "+scpf
+  document["icpf"].innerHTML=""
+
+def carregaCEP( ev ):
+  cep = document["icep"].value
+  ajax.get("https://viacep.com.br/ws/" + cep + "/json", oncomplete=preencheCEP)
+
+def preencheCEP( res ):
+  resposta = res.json
+  document["ilogradouro"].value = resposta["logradouro"]
+  document["ilogradouro"].disabled = True
+
+document["iconfirma"].bind("blur", checasenha)
+document["icpf"].bind("blur", checacpf)
+document["icep"].bind("blur", carregaCEP)
+
+document["formficha"] <= EntraTexto("Demonstração de classe para entrada de texto")
+
+</script>
 
 
 <div class="w3-container">
@@ -30,7 +123,7 @@
       <h2>Cadastro</h2>
     </div>
 
-<form action="" method="post" class="w3-container">
+<form id="formficha" action="" method="post" class="w3-container">
 
   <p>
     <label>Nome</label>
