@@ -29,6 +29,10 @@ class EntraTexto(html.DIV):
 	def acao(self, funcao):
 		self.inputCpo.bind("blur", funcao)
 
+def alerta(mensagem="ERRO"):
+	document["caixaerro"].style.display = "block"
+	document["mensagemerro"].innerHTML = mensagem
+
 
 def checasenha( ev ):
 	conf = document["iconfirma"]
@@ -36,41 +40,41 @@ def checasenha( ev ):
 	if conf.value != senha.value:
 			senha.value = ""
 			conf.value = ""
-
-			document["caixaerro"].style.display = "block"
-			document["mensagemerro"].innerHTML = "Senhas não batem"
+			alerta("As senhas não batem")
 			senha.classList.add("w3-border-red")
 			conf.classList.add("w3-border-red")
 
 def checacpf( ev ):
 	Soma = 0;
-	strCPF = ev.currentTarget.value
-	strCPF = strCPF.replace('.','')
-	strCPF = strCPF.replace('-','')
-	if (strCPF == "00000000000"): corrigeCPF(ev.currentTarget)
-	if len(strCPF)!=11:  corrigeCPF(strCPF)
-	for i in range(0,9):  Soma = Soma + int(strCPF[i]) * (11 - (i+1) )
-	Resto = (Soma * 10) % 11;
-	if ((Resto == 10) or (Resto == 11)):  Resto = 0
-	if (Resto != int(strCPF[9]) ): corrigeCPF(ev.currentTarget)
-	Soma = 0;
-	for i in range(0,10):
-	  Soma = Soma + int(strCPF[i]) * (12 - (i+1))
-	Resto = (Soma * 10) % 11
-	if ((Resto == 10) or (Resto == 11)):
-	  Resto = 0
-	if Resto != int(strCPF[10] ):
-		corrigeCPF(ev.currentTarget)
-	return True
 
-def corrigeCPF(campocpf):
-  document["caixaerro"].style.display="block"
-  document["mensagemerro"].innerHTML = "CPF inválido "+ campocpf.valor()
-  campocpf.innerHTML=""
+	try:
+		strCPF = ev.currentTarget.value
+		strCPF = strCPF.replace('.','')
+		strCPF = strCPF.replace('-','')
+		if (strCPF == "00000000000"): raise  #corrigeCPF(ev.currentTarget)
+		if len(strCPF)!=11:  alerta("CPF inválido => "+ strCPF)
+		for i in range(0,9):  Soma = Soma + int(strCPF[i]) * (11 - (i+1) )
+		Resto = (Soma * 10) % 11;
+		if ((Resto == 10) or (Resto == 11)):  Resto = 0
+		if (Resto != int(strCPF[9]) ): raise   #corrigeCPF(ev.currentTarget)
+		Soma = 0;
+		for i in range(0,10):
+		  Soma = Soma + int(strCPF[i]) * (12 - (i+1))
+		Resto = (Soma * 10) % 11
+		if ((Resto == 10) or (Resto == 11)):
+		  Resto = 0
+		if Resto != int(strCPF[10] ):
+			raise    #corrigeCPF(ev.currentTarget)
+		return True
+	except:
+		alerta("CPF inválido => "+ ev.currentTarget.value)
+		ev.currentTarget.value = ""
+		ev.currentTarget.focus()
 
 def carregaCEP( ev ):
   cep = document["icep"].value
   ajax.get("https://viacep.com.br/ws/" + cep + "/json", oncomplete=preencheCEP)
+  document["inum"].focus()
 
 def preencheCEP( res ):
   resposta = res.json
@@ -88,7 +92,7 @@ class Ficha(html.DIV):
 		self.cpoConf = EntraTexto("Confirma senha", password=True, id="iconfirma", acao=checasenha)
 		self.cpoCep = EntraTexto("CEP", id="icep", acao=carregaCEP)
 		self.cpoLogradouro = EntraTexto("Logradouro", id="ilogradouro")
-		self.cpoNumero = EntraTexto("Número")
+		self.cpoNumero = EntraTexto("Número", id="inum")
 
 		botOK = html.BUTTON("OK", type="submit", Class="w3-btn w3-green w3-round-large")#, click=self.submete)
 		botOK.bind("click",self.submete)
@@ -99,8 +103,9 @@ class Ficha(html.DIV):
 		self <= self.cpoSenha
 		self <= self.cpoConf
 		self <= self.cpoCep
-		self <= self.cpoLogradouro
-		self <= self.cpoNumero
+
+		self <= html.DIV(Class="w3-twothird" )<= self.cpoLogradouro
+		self <= html.DIV(Class="w3-third" )<= self.cpoNumero
 		self <= botOK
 
 	def submete(self, ev):
