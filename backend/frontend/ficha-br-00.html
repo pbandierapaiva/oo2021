@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cadastro</title>
+<meta charset="UTF-8">
+<meta author="Paulo Bandiera-Paiva">
+
+<!-- W3css -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<!-- Brython -->
+<script src="https://cdn.jsdelivr.net/npm/brython@3/brython.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/brython@3/brython_stdlib.js"></script>
+
+</head>
+
+<body  onload="brython()">
+
+<script type="text/python">
+
+from browser import document
+from browser import alert, ajax,  html
+
+class EntraTexto(html.DIV):
+	def __init__(self, labelStr, valor="", width="", password=False, id=None, acao=None):
+		html.DIV.__init__(self)
+		if width !="":
+			self.style = {"width":width}
+		self.inputLbl = html.LABEL(labelStr)
+		self.inputCpo = html.INPUT()
+		if id: self.inputCpo.id=id
+		if password: self.inputCpo.type = 'password'
+		if acao: self.acao(acao)
+		self.inputCpo.value = valor
+		self.inputCpo.className = "w3-input"
+		self.alterado = False
+		self <= self.inputLbl
+		self <= self.inputCpo
+	def enable(self):
+		self.inputCpo.disabled = False
+	def disable(self):
+		self.inputCpo.disabled = True
+	def valor(self):
+		return self.inputCpo.value
+	def setavalor(self, val):
+		self.inputCpo.value= val
+		self.alterado = True
+	def acao(self, funcao):
+		self.inputCpo.bind("blur", funcao)
+
+
+def checasenha( ev ):
+	conf = document["iconfirma"]
+	senha = document["isenha"]
+	if conf.value != senha.value:
+			senha.value = ""
+			conf.value = ""
+
+			document["caixaerro"].style.display = "block"
+			document["mensagemerro"].innerHTML = "Senhas não batem"
+			senha.classList.add("w3-border-red")
+			conf.classList.add("w3-border-red")
+
+def checacpf( ev ):
+	Soma = 0;
+	strCPF = ev.currentTarget.value
+	strCPF = strCPF.replace('.','')
+	strCPF = strCPF.replace('-','')
+	if (strCPF == "00000000000"): corrigeCPF(ev.currentTarget)
+	if len(strCPF)!=11:  corrigeCPF(strCPF)
+	for i in range(0,9):  Soma = Soma + int(strCPF[i]) * (11 - (i+1) )
+	Resto = (Soma * 10) % 11;
+	if ((Resto == 10) or (Resto == 11)):  Resto = 0
+	if (Resto != int(strCPF[9]) ): corrigeCPF(ev.currentTarget)
+	Soma = 0;
+	for i in range(0,10):
+	  Soma = Soma + int(strCPF[i]) * (12 - (i+1))
+	Resto = (Soma * 10) % 11
+	if ((Resto == 10) or (Resto == 11)):
+	  Resto = 0
+	if Resto != int(strCPF[10] ):
+		corrigeCPF(ev.currentTarget)
+	return True
+
+def corrigeCPF(campocpf):
+  document["caixaerro"].style.display="block"
+  document["mensagemerro"].innerHTML = "CPF inválido "+ campocpf.value
+  campocpf.innerHTML=""
+
+def carregaCEP( ev ):
+  cep = document["icep"].value
+  ajax.get("https://viacep.com.br/ws/" + cep + "/json", oncomplete=preencheCEP)
+
+def preencheCEP( res ):
+  resposta = res.json
+  document["ilogradouro"].value = resposta["logradouro"]
+  document["ilogradouro"].disabled = True
+
+class Ficha(html.DIV):
+	def __init__(self):
+		html.DIV.__init__(self, Class="w3-container")
+		# Campos INPUT da  ficha
+		self.cpoNome = EntraTexto("Nome")
+		self.cpoEmail = EntraTexto("e-mail")
+		self.cpoCpf = EntraTexto("CPF", acao=checacpf)
+		self.cpoSenha = EntraTexto("Senha", password=True, id="isenha")
+		self.cpoConf = EntraTexto("Confirma senha", password=True, id="iconfirma", acao=checasenha)
+		self.cpoCep = EntraTexto("CEP", id="icep", acao=carregaCEP)
+		self.cpoLogradouro = EntraTexto("Logradouro", id="ilogradouro")
+		self.cpoNumero = EntraTexto("Número")
+
+		botOK = html.BUTTON("OK", type="submit", Class="w3-btn w3-green w3-round-large")#, click=self.submete)
+		botOK.bind("click",self.submete)
+
+		self <= self.cpoNome
+		self <= self.cpoEmail
+		self <= self.cpoCpf
+		self <= self.cpoSenha
+		self <= self.cpoConf
+		self <= self.cpoCep
+		self <= self.cpoLogradouro
+		self <= self.cpoNumero
+		self <= botOK
+
+	def submete(self, ev):
+		alert("submetendo")
+		dados = {'nome':self.cpoNome.valor(),
+						'email':self.cpoEmail.valor(),
+						'cpf':self.cpoCpf.valor(),
+						'senha':self.cpoSenha.valor(),
+						'cep':self.cpoCep.valor(),
+						'num':self.cpoNumero.valor()
+					}
+		ajax.post('localhost:3000/user', data=dados, oncomplete=self.completouSubmeteUser)
+
+	def completouSubmeteUser(self, ev):
+		alert("submeteu")
+
+document["formficha"] <= Ficha()
+
+</script>
+
+
+<div class="w3-container">
+  <div class="w3-card-4">
+    <div class="w3-container w3-green">
+      <h2>Cadastro</h2>
+    </div>
+
+<!-- DIV para conter o formulário -->
+<div  id="formficha" class="w3-container">
+</div>
+
+<!-- <form id="formficha" action="http://localhost:3000/user" method="POST" class="w3-container">
+</form> -->
+
+
+  <!-- CAIXA DE DIALOGO MODAL -->
+    <div id="caixaerro" class="w3-modal">
+      <div class="w3-modal-content w3-card-4">
+        <header class="w3-container w3-green">
+          <span onclick="document.getElementById('caixaerro').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          <h2>Atenção</h2>
+        </header>
+        <div class="w3-container">
+          <p id='mensagemerro'>XXXXXX</p>
+        </div>
+        <button class="w3-btn w3-block w3-green"  onclick="document.getElementById('caixaerro').style.display='none'">OK</button>
+
+      </div>
+    </div>
+
+	</div>
+</div>
+
+</body>
+</html>

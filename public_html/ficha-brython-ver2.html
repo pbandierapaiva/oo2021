@@ -23,7 +23,7 @@ from browser import document
 from browser import alert, ajax,  html
 
 class EntraTexto(html.DIV):
-	def __init__(self, labelStr, valor="", width="", password=False, id=None):
+	def __init__(self, labelStr, valor="", width="", password=False, id=None, acao=None):
 		html.DIV.__init__(self)
 		if width !="":
 			self.style = {"width":width}
@@ -31,6 +31,7 @@ class EntraTexto(html.DIV):
 		self.inputCpo = html.INPUT()
 		if id: self.inputCpo.id=id
 		if password: self.inputCpo.type = 'password'
+		if acao: self.acao(acao)
 		self.inputCpo.value = valor
 		self.inputCpo.className = "w3-input"
 		self.alterado = False
@@ -98,18 +99,15 @@ def preencheCEP( res ):
 
 cpoNome = EntraTexto("Nome")
 cpoEmail = EntraTexto("e-mail")
-cpoCpf = EntraTexto("CPF")
-cpoCpf.acao(checacpf)
+cpoCpf = EntraTexto("CPF", acao=checacpf)
 cpoSenha = EntraTexto("Senha", password=True, id="isenha")
-cpoConf = EntraTexto("Confirma senha", password=True, id="iconfirma")
-cpoConf.acao(checasenha)
-cpoCep = EntraTexto("CEP", id="icep")
-cpoCep.acao(carregaCEP)
+cpoConf = EntraTexto("Confirma senha", password=True, id="iconfirma", acao=checasenha)
+cpoCep = EntraTexto("CEP", id="icep", acao=carregaCEP)
 cpoLogradouro = EntraTexto("Logradouro", id="ilogradouro")
 cpoNumero = EntraTexto("Número")
 botOK = html.BUTTON("OK", type="submit", Class="w3-btn w3-green w3-round-large")
 
-document["formficha"] <=cpoNome
+document["formficha"] <= cpoNome
 document["formficha"] <= cpoEmail
 document["formficha"] <= cpoCpf
 document["formficha"] <= cpoSenha
