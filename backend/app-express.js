@@ -20,16 +20,15 @@ app.get('/oi/:nome', (req, res) => {
 })
 
 app.get('/users',(req, res) => {
-  fs.readFile('user.json', 'utf8' , (err, data) => {
-    if(err) {
-      console.log("ERRO de leitura de arquivo")
-      res.send(JSON.stringify({'status':'ERRO', 'msg':'ERRO de leitura de arquivo'}))
+
+  try {
+    data = fs.readFileSync('.user.json', 'utf8')
+    userlist = JSON.parse(data)
+  } catch (err) {
+    console.log("ERRO de leitura de arquivo")
+    res.send(JSON.stringify({'status':'ERRO', 'msg':err}))
     }
-
-    console.log( eval(data) )
-
-  })
-  res.send('Fez alguma coisa')
+  res.send(JSON.stringify({'status':'OK','users':userlist}))
 })
 
 app.post('/user', (req, res) => {
@@ -37,23 +36,21 @@ app.post('/user', (req, res) => {
   var senhacod=''
   var bd=[]
   try {
-    data = fs.readFileSync('user.json', 'utf8')
+    data = fs.readFileSync('.user.json', 'utf8')
     bd = JSON.parse(data)
-  } catch (err) {
-          console.log("Arquivo user.json inexistente")
+    } catch (err) {
+          console.log("Arquivo user.json inexistente - será criado")
     }
 
   bcrypt.hash(req.body.senha, salt, (err, hash) => {
-    senhacod = hash
-    console.log(senhacod)
-
-    req.body.senha = senhacod
+    req.body.senha = hash
+    console.log(bd)
 
     bd.push(req.body)
 
     console.log(bd)
 
-    fs.appendFile('user.json', JSON.stringify(bd), (err) => {
+    fs.writeFile('.user.json', JSON.stringify(bd), (err) => {
         if(err)
           console.log(err)
     })
