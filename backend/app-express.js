@@ -7,7 +7,7 @@ const salt = 10;
 
 const port = 3000
 
-app.use('/fe',express.static('frontend'));
+app.use('/web',express.static('frontend'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,11 +31,49 @@ app.get('/users',(req, res) => {
 
   retData=[]
   userList.forEach((item) => {
-    retData.push({'nome':item.nome, 'email': item.email})
+    retData.push({'nome':item.nome, 'email': item.email, 'cpf': item.cpf})
   });
 
   res.send(JSON.stringify({'status':'OK','users':retData}))
 })
+
+
+app.get('/users/:cpf',(req, res) => {
+  paracpf = req.params["cpf"]
+  console.log("Procurando CPF  " + paracpf)
+
+  try {
+    data = fs.readFileSync('.user.json', 'utf8')
+    userList = JSON.parse(data)
+  } catch (err) {
+    console.log("Arquivo inexistente")
+    res.send(JSON.stringify({'status':'ERRO', 'msg':err}))
+    return
+    }
+
+
+  achou = false
+  itemencontrado = {}
+  retData=[]
+  userList.forEach((item,i) => {
+    if( item.cpf == paracpf ){
+      achou = true
+      itemencontrado = item
+
+      }
+    })
+
+  if(achou) {
+    res.send(JSON.stringify({'status':'OK','user':itemencontrado}))
+    console.log("CPF encontrado")
+  }
+  else {
+    res.send(JSON.stringify({'status':'ERRO','msg':'CPF não encontrado na base'}))
+    console.log("CPF não encontrado")
+
+  }
+})
+
 
 app.post('/user', (req, res) => {
   console.log('Processando post ')
@@ -47,6 +85,16 @@ app.post('/user', (req, res) => {
     } catch (err) {
           console.log("Arquivo user.json inexistente - será criado")
     }
+
+  bd.forEach((item, i) => {
+    if(item.cpf == req.body.cpf) {
+        res.send(JSON.stringify({'status':'ERRO','msg':'CPF já cadastrado'}))
+        return
+    }
+
+  });
+
+
 
   bcrypt.hash(req.body.senha, salt, (err, hash) => {
     req.body.senha = hash

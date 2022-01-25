@@ -65,11 +65,20 @@ def checacpf( ev ):
 		  Resto = 0
 		if Resto != int(strCPF[10] ):
 			raise    #corrigeCPF(ev.currentTarget)
+
+		ajax.get("/users/%s"%strCPF, oncomplete=retornoCPF)
+
 		return True
 	except:
 		alerta("CPF inválido => "+ ev.currentTarget.value)
 		ev.currentTarget.value = ""
 		ev.currentTarget.focus()
+
+def retornoCPF( res ):
+	if res.json["status"]=="ERRO":  # CPF não encontrado
+ 		return True
+	alerta("CPF já cadastrado")
+
 
 def carregaCEP( ev ):
   cep = document["icep"].value
@@ -110,6 +119,9 @@ class Ficha(html.DIV):
 
 	def submete(self, ev):
 
+		if self.cpoSenha.valor()=='' or self.cpoNome.valor()=='' or self.cpoCpf.valor()=='':
+			alerta("Campos nome, cpf e senha obrigatórios")
+			return
 		dados = {'nome':self.cpoNome.valor(),
 						'email':self.cpoEmail.valor(),
 						'cpf':self.cpoCpf.valor(),
@@ -120,6 +132,8 @@ class Ficha(html.DIV):
 		ajax.post('/user', data=dados, oncomplete=self.completouSubmeteUser)
 
 	def completouSubmeteUser(self, res):
-		alert("Retorno da submissão:  "+str(res.json))
+		if res.json["status"] != "OK":
+			alerta("ERRO:  "+ res.json["msg"])
+
 
 document["formficha"] <= Ficha()
