@@ -13,10 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
-})
 
-app.get('/oi/:nome', (req, res) => {
-  res.send('Oi '+req.params["nome"])
 })
 
 app.get('/users',(req, res) => {
@@ -77,7 +74,6 @@ app.get('/users/:cpf',(req, res) => {
 
 app.post('/user', (req, res) => {
   console.log('Processando post ')
-  var senhacod=''
   var bd=[]
   try {
     data = fs.readFileSync('.user.json', 'utf8')
@@ -90,37 +86,54 @@ app.post('/user', (req, res) => {
     if(item.cpf == req.body.cpf) {
         res.send(JSON.stringify({'status':'ERRO','msg':'CPF já cadastrado'}))
         return
+      }
+    })
+  bcrypt.hash(req.body.senha, salt, (err, hash) => {
+        req.body.senha = hash
+        console.log(bd)
+        bd.push(req.body)
+        console.log(bd)
+        fs.writeFile('.user.json', JSON.stringify(bd), (err) => {
+            if(err)
+              console.log(err)
+        })
+      })
+})  // POST /user
+
+
+
+app.post('/autentica', (req, res) => {
+  console.log('autenticando '+req.body.cpf)
+  try {
+    data = fs.readFileSync('.user.json', 'utf8')
+    userList = JSON.parse(data)
+  } catch (err) {
+    console.log("ERRO de leitura de arquivo")
+    res.send(JSON.stringify({'status':'ERRO', 'msg':err}))
+    return
     }
 
-  });
-
-
-
-  bcrypt.hash(req.body.senha, salt, (err, hash) => {
-    req.body.senha = hash
-    console.log(bd)
-
-    bd.push(req.body)
-
-    console.log(bd)
-
-    fs.writeFile('.user.json', JSON.stringify(bd), (err) => {
-        if(err)
-          console.log(err)
+  ret = {'status':'ERRO', 'msg':'Usuário não encontrado!!'}
+  //console.log(userList)
+  userList.forEach((item, i) => {
+    if( item.cpf == req.body.cpf ) {
+        console.log( item.cpf )
+        bcrypt.hash( req.body.senha, salt, (err, hash) => {
+          console.log(hash)
+          console.log(item.senha)
+          if( hash != item.senha ){
+              ret = {'status':'ERRO', 'msg':'Senha incorreta'}
+              console.log( 'senha incorreta')
+            }
+          else {
+              ret = {'status':'OK', 'msg':'Usuário OK'}
+              console.log('senha OK')
+            }
+        })
+      }
     })
-
-    });
-
-
-
-  console.log(req.body)
-
-  res.send(JSON.stringify({'status':'OK'}))
-})
-
-
-
-
+    res.send(JSON.stringify(ret))
+  })
 
 app.listen(port, () => {
   console.log(`Monitorando http://localhost:${port}`)
