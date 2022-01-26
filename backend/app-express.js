@@ -112,23 +112,18 @@ app.post('/autentica', (req, res) => {
     res.send(JSON.stringify({'status':'ERRO', 'msg':err}))
     return
     }
-
   itens = userList.filter( (item) => {
       return item.cpf == req.body.cpf
   })
-
-  console.log( itens )
+  console.log( itens ) // itens encontrados
   if( itens.length > 0 ){   // encontrou o cpf?
       encontrado = itens[0]
-
       sucesso = bcrypt.compare( req.body.senha, encontrado.senha, (err, resultado) => {
         if(resultado) {
-          // ret= {'status':'OK', 'msg':'Usuário OK'}
           res.end(JSON.stringify({'status':'OK', 'msg':'Usuário OK'}))
           console.log('senha OK')
           }
         else {
-          // ret= {'status':'ERRO', 'msg':'Senha incorreta'}
           res.end(JSON.stringify({'status':'ERRO', 'msg':'Senha incorreta'}))
           console.log( 'senha incorreta')
           }
