@@ -101,9 +101,9 @@ app.post('/user', (req, res) => {
 })  // POST /user
 
 
-
 app.post('/autentica', (req, res) => {
-  console.log('autenticando '+req.body.cpf)
+
+  console.log('autenticando ')
   try {
     data = fs.readFileSync('.user.json', 'utf8')
     userList = JSON.parse(data)
@@ -113,27 +113,31 @@ app.post('/autentica', (req, res) => {
     return
     }
 
-  ret = {'status':'ERRO', 'msg':'Usuário não encontrado!!'}
-  //console.log(userList)
-  userList.forEach((item, i) => {
-    if( item.cpf == req.body.cpf ) {
-        console.log( item.cpf )
-        bcrypt.hash( req.body.senha, salt, (err, hash) => {
-          console.log(hash)
-          console.log(item.senha)
-          if( hash != item.senha ){
-              ret = {'status':'ERRO', 'msg':'Senha incorreta'}
-              console.log( 'senha incorreta')
-            }
-          else {
-              ret = {'status':'OK', 'msg':'Usuário OK'}
-              console.log('senha OK')
-            }
-        })
-      }
-    })
-    res.send(JSON.stringify(ret))
+  itens = userList.filter( (item) => {
+      return item.cpf == req.body.cpf
   })
+
+  console.log( itens )
+  if( itens.length > 0 ){   // encontrou o cpf?
+      encontrado = itens[0]
+
+      sucesso = bcrypt.compare( req.body.senha, encontrado.senha, (err, resultado) => {
+        if(resultado) {
+          // ret= {'status':'OK', 'msg':'Usuário OK'}
+          res.end(JSON.stringify({'status':'OK', 'msg':'Usuário OK'}))
+          console.log('senha OK')
+          }
+        else {
+          // ret= {'status':'ERRO', 'msg':'Senha incorreta'}
+          res.end(JSON.stringify({'status':'ERRO', 'msg':'Senha incorreta'}))
+          console.log( 'senha incorreta')
+          }
+      }) // final do bcrypt.compare
+  }
+  else {  // não encontrou o CPF
+      res.end(JSON.stringify({'status':'ERRO', 'msg':'Usuário não encontrado.'}))
+  }
+})
 
 app.listen(port, () => {
   console.log(`Monitorando http://localhost:${port}`)

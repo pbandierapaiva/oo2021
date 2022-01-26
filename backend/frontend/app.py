@@ -8,11 +8,12 @@ from util import *
 class Login( html.DIV ):
     def __init__(self):
         html.DIV.__init__( self, Class="w3-container w3-center w3-border w3-padding" )
-        self.style = {'width':'50%'}
+        self <= html.LABEL("Identifique-se", Class="w3-container")
+        self.style = {'width':'50%', 'margin':'auto'}
         self.cpf = EntraTexto("CPF")
         self.senha = EntraTexto("senha", password=True)
 
-        botOK = html.BUTTON("OK", type="submit", Class="w3-btn w3-green w3-round-large w3-block")#, click=self.submete)
+        botOK = html.BUTTON("OK", type="submit", Class="w3-btn w3-green  w3-margin w3-round-large")
         botOK.bind("click",self.submeteLogin)
 
         self <= self.cpf
