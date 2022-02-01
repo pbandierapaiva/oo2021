@@ -3,6 +3,7 @@ from browser import document
 from browser import alert, ajax,  html
 
 from util import *
+from ficha import *
 
 
 class Login( html.DIV ):
@@ -13,25 +14,31 @@ class Login( html.DIV ):
         self.cpf = EntraTexto("CPF")
         self.senha = EntraTexto("senha", password=True)
 
-        botOK = html.BUTTON("OK", type="submit", Class="w3-btn w3-green  w3-margin w3-round-large")
+        botOK = html.BUTTON("OK", type="submit", Class="w3-btn w3-green w3-center w3-margin w3-round-large")
         botOK.bind("click",self.submeteLogin)
+        botCad = html.BUTTON("Cadastre-se", Class="w3-btn w3-green w3-center w3-margin w3-round-large")
+        botCad.bind("click",self.cadastro)
 
         self <= self.cpf
         self <= self.senha
         self <= botOK
+        self <= botCad
 
     def submeteLogin(self, ev):
-        # alerta("submeteu:  %s %s"%(self.cpf.valor(),self.senha.valor()) )
         cpf = self.cpf.valor().strip().replace('.','').replace('-','')
         dados = {'cpf':cpf, 'senha':self.senha.valor()}
         ajax.post('/autentica', data= dados, oncomplete=self.resposta)
 
+    def cadastro(self, ev):
+        document["main"].innerHTML = ""
+        document["main"] <= Ficha()
+
+
     def resposta(self, res):
         if res.json["status"]=="ERRO":
-            alert(res.json["msg"])
+            alerta(res.json["msg"])
         else:
             alert("Usuário OK")
 
-
-
-document <= Login()
+document["main"].innerHTML=""
+document["main"] <= Login()

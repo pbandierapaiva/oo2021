@@ -12,8 +12,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
-
+  // res.send('Hello World!')
+  res.redirect(301, "/web")
 })
 
 app.get('/users',(req, res) => {
@@ -47,8 +47,6 @@ app.get('/users/:cpf',(req, res) => {
     res.send(JSON.stringify({'status':'ERRO', 'msg':err}))
     return
     }
-
-
   achou = false
   itemencontrado = {}
   retData=[]
@@ -56,10 +54,8 @@ app.get('/users/:cpf',(req, res) => {
     if( item.cpf == paracpf ){
       achou = true
       itemencontrado = item
-
       }
     })
-
   if(achou) {
     res.send(JSON.stringify({'status':'OK','user':itemencontrado}))
     console.log("CPF encontrado")
@@ -67,7 +63,6 @@ app.get('/users/:cpf',(req, res) => {
   else {
     res.send(JSON.stringify({'status':'ERRO','msg':'CPF não encontrado na base'}))
     console.log("CPF não encontrado")
-
   }
 })
 
@@ -98,6 +93,7 @@ app.post('/user', (req, res) => {
               console.log(err)
         })
       })
+  res.send(JSON.stringify({'status':'OK'}))
 })  // POST /user
 
 

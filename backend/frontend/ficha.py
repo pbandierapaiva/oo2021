@@ -3,6 +3,7 @@ from browser import document
 from browser import alert, ajax,  html
 
 from util import *
+from app import Login
 
 def checasenha( ev ):
 	conf = document["iconfirma"]
@@ -62,7 +63,10 @@ def preencheCEP( res ):
 
 class Ficha(html.DIV):
 	def __init__(self):
-		html.DIV.__init__(self, Class="w3-container")
+		html.DIV.__init__(self, Class="w3-container w3-padding w3-margin")
+
+		conti = html.DIV(Class="w3-card-4")
+		conti <= html.DIV("Cadstro", Class="w3-container w3-green")
 		# Campos INPUT da  ficha
 		self.cpoNome = EntraTexto("Nome")
 		self.cpoEmail = EntraTexto("e-mail")
@@ -76,16 +80,18 @@ class Ficha(html.DIV):
 		botOK = html.BUTTON("OK", type="submit", Class="w3-btn w3-green w3-round-large")#, click=self.submete)
 		botOK.bind("click",self.submete)
 
-		self <= self.cpoNome
-		self <= self.cpoEmail
-		self <= self.cpoCpf
-		self <= self.cpoSenha
-		self <= self.cpoConf
-		self <= self.cpoCep
+		conti <= self.cpoNome
+		conti <= self.cpoEmail
+		conti <= self.cpoCpf
+		conti <= self.cpoSenha
+		conti <= self.cpoConf
+		conti <= self.cpoCep
 
-		self <= html.DIV(Class="w3-twothird" )<= self.cpoLogradouro
-		self <= html.DIV(Class="w3-third" )<= self.cpoNumero
-		self <= botOK
+		conti <= html.DIV(Class="w3-twothird" )<= self.cpoLogradouro
+		conti <= html.DIV(Class="w3-third" )<= self.cpoNumero
+		conti <= botOK
+
+		self <= conti
 
 	def submete(self, ev):
 
@@ -106,6 +112,6 @@ class Ficha(html.DIV):
 	def completouSubmeteUser(self, res):
 		if res.json["status"] != "OK":
 			alerta("ERRO:  "+ res.json["msg"])
-
-
-document["formficha"] <= Ficha()
+		else:
+			document["main"].innerHTML=""
+			document["main"] <= Login()
