@@ -41,7 +41,7 @@ class Login( html.DIV ):
         if res.json["status"]=="ERRO":
             alerta(res.json["msg"])
         else:
-            alert("Usuário OK")
+            alerta("Usuário Identificado")
 
 document["main"].innerHTML=""
 document["main"] <= Login()

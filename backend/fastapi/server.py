@@ -7,7 +7,7 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
 import json
-import crypt
+import bcrypt
 
 class Autentica(BaseModel):
     cpf: str
@@ -44,15 +44,19 @@ def get_user_cpf( cpf ):
 
 @app.post("/autentica")
 async def post_autentica( autentica: Autentica ):
+    print("no POST")
     fp = open("../.user.json")
     users = json.loads( fp.read() )
     for u in users:
         if(u["cpf"] == autentica.cpf):
-            h = crypt.crypt( autentica.senha )
-            ret = {"status": "ERROR","msg": h + "  "+u["senha"]}
+            confere = bcrypt.checkpw( autentica.senha.encode('utf8'), u["senha"].encode('utf8') )
+            if confere:
+                ret = {"status": "OK","msg": "Usuário autenticado"}
+            else:
+                ret = {"status": "ERRO","msg": "Senha incorreta"}
             return JSONResponse(content=jsonable_encoder(ret))
 
 
-    ret = {"status": "ERROR","msg": "Usuário não encontrao"}
+    ret = {"status": "ERROR","msg": "Usuário não encontrado"}
     print(ret)
     return JSONResponse(content=jsonable_encoder(ret))
