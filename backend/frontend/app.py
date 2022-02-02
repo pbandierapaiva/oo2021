@@ -5,6 +5,8 @@ from browser import alert, ajax,  html
 from util import *
 from ficha import *
 
+import json
+
 
 class Login( html.DIV ):
     def __init__(self):
@@ -27,7 +29,8 @@ class Login( html.DIV ):
     def submeteLogin(self, ev):
         cpf = self.cpf.valor().strip().replace('.','').replace('-','')
         dados = {'cpf':cpf, 'senha':self.senha.valor()}
-        ajax.post('/autentica', data= dados, oncomplete=self.resposta)
+        alerta(json.dumps(dados))
+        ajax.post('/autentica', data=json.dumps(dados), oncomplete=self.resposta, headers={"Content-Type": "application/json; charset=utf-8"} )
 
     def cadastro(self, ev):
         document["main"].innerHTML = ""
